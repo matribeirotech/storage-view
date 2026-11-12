@@ -361,6 +361,29 @@ def test_cli_headless_top_min_size_and_json_csv(tmp_path: Path) -> None:
     assert any(row[1] == "big.iso" for row in csv_rows[1:])
 
 
+def test_cli_report_safe_for_cp1252_legacy_windows(tmp_path: Path) -> None:
+    from rich.console import Console
+    from storage_view.cli.reporter import render_report
+
+    _write_bytes(tmp_path / "data.bin", 2048)
+    result = StorageScanner().scan(tmp_path)
+
+    raw_bytes = io.BytesIO()
+    cp1252_stream = io.TextIOWrapper(raw_bytes, encoding="cp1252", errors="strict")
+    legacy_console = Console(
+        file=cp1252_stream,
+        legacy_windows=True,
+        force_terminal=False,
+        width=80,
+    )
+    render_report(result, console=legacy_console)
+    cp1252_stream.flush()
+
+    rendered = raw_bytes.getvalue().decode("cp1252")
+    assert "data.bin" in rendered
+    assert "#" in rendered
+
+
 def test_tui_navigation_and_sorting(tmp_path: Path) -> None:
     from storage_view.cli.tui_app import StorageTUIApp
 

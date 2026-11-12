@@ -278,8 +278,24 @@ def cli(
     )
 
 
+def _configure_stdio() -> None:
+    """Ensure stdout/stderr handle Unicode output safely on Windows pipes and legacy consoles."""
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(sys, stream_name, None)
+        if stream is None or not hasattr(stream, "reconfigure"):
+            continue
+        try:
+            if not stream.isatty():
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            else:
+                stream.reconfigure(errors="replace")
+        except Exception:
+            pass
+
+
 def main() -> None:
     """Console script and standalone executable entrypoint."""
+    _configure_stdio()
     # Support GUI launch if packaged without console (sys.stdout is None on Windows)
     if sys.platform == "win32" and sys.stdout is None and len(sys.argv) <= 1:
         if _has_pyside6():

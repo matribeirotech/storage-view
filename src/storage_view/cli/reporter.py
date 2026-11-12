@@ -54,6 +54,18 @@ def _usage_color(percent: float) -> str:
     return "cyan"
 
 
+def _can_encode(console: Console, sample: str) -> bool:
+    """Check whether the console encoding safely supports the given characters."""
+    if getattr(console, "legacy_windows", False):
+        return False
+    enc = getattr(console, "encoding", None) or "utf-8"
+    try:
+        sample.encode(enc)
+        return True
+    except (UnicodeEncodeError, LookupError):
+        return False
+
+
 def render_report(
     result: ScanResult,
     *,
@@ -94,10 +106,15 @@ def render_report(
     if stats.cancelled:
         summary.append("  [PARTIAL - CANCELLED]", style="bold red")
 
+    unicode_ok = _can_encode(out, "█░—")
+    title_sep = "—" if unicode_ok else "-"
+    bar_filled = "█" if unicode_ok else "#"
+    bar_empty = "░" if unicode_ok else "-"
+
     out.print(
         Panel(
             summary,
-            title="[bold cyan]Storage View — Disk Usage Summary[/bold cyan]",
+            title=f"[bold cyan]Storage View {title_sep} Disk Usage Summary[/bold cyan]",
             border_style="cyan",
             padding=(0, 1),
         )
@@ -147,7 +164,12 @@ def render_report(
     for idx, node in enumerate(entries, start=1):
         pct = node.percentage_of(root_size)
         color = _usage_color(pct)
-        bar = format_bar(pct / 100.0, width=bar_width)
+        bar = format_bar(
+            pct / 100.0,
+            width=bar_width,
+            filled=bar_filled,
+            empty=bar_empty,
+        )
 
         if isinstance(node, DirNode):
             kind = "[bold blue]DIR[/bold blue]"
