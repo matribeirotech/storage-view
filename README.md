@@ -1,6 +1,11 @@
 # Storage View
 
+[![Maintained by LYPSYOS Open Source Community](https://img.shields.io/badge/Maintained%20by-LYPSYOS%20OSS%20Community-2457F5?style=for-the-badge)](https://lypsyos.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
+
 **Storage View** is an open-source, high-performance disk space analyzer with a decoupled scanning core (`storage_view.core`), a dark-mode desktop **GUI for Windows** (`PySide6`), and an interactive **TUI** (`Textual`) + **Headless CLI** (`Rich`) for Linux servers and terminals.
+
+> Part of the **[LYPSYOS Open Source Lab & Community](https://lypsyos.com)** ecosystem — lightweight, transparent tools for developers and infrastructure.
 
 ---
 
@@ -147,6 +152,12 @@ pyinstaller --noconfirm --onefile --windowed --name storage-view src/storage_vie
 pytest
 ```
 
+## Contributing & Community
+
+Contributions are welcome! Check [`CONTRIBUTING.md`](CONTRIBUTING.md), our [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and issues labeled `good first issue`.
+
+- Discuss ideas in **GitHub Discussions** or leave feedback on [lypsyos.com/projetos](https://lypsyos.com/projetos?projeto=storage-view).
+
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Maintained by **[LYPSYOS Open Source Community](https://lypsyos.com)** (`@matribeirotech`).
